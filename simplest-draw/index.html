@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="mystyle.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.7.0/dist/tf.min.js"></script>
+    <script>
+      async function loaded() {
+        // get the canvas element and its context
+        const canvas = document.getElementById('sketchpad')
+        const context = canvas.getContext('2d')
+        context.lineWidth = 14
+        context.lineCap = 'round'
+        let isIdle = true
+
+        function drawStart(event) {
+          context.beginPath()
+          context.moveTo(
+            event.pageX - canvas.offsetLeft,
+            event.pageY - canvas.offsetTop
+          )
+          isIdle = false
+        }
+        function drawMove(event) {
+          if (isIdle) return
+          context.lineTo(
+            event.pageX - canvas.offsetLeft,
+            event.pageY - canvas.offsetTop
+          )
+          context.stroke()
+        }
+        function drawEnd(event) {
+          isIdle = true
+        }
+
+        function clean() {
+          context.fillStyle = "#fff";     
+          context.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);  
+        }
+
+        function save() {
+          const link = document.getElementById("link");
+          link.setAttribute("download", "trek.png");
+          link.setAttribute(
+            "href",
+            canvas
+              .toDataURL("image/png")
+              .replace("image/png", "image/octet-stream")
+          );
+          link.click();          
+        }
+
+        canvas.addEventListener('mousedown', drawStart, false)
+        canvas.addEventListener('mousemove', drawMove, false)
+        canvas.addEventListener('mouseup', drawEnd, false)
+        document.getElementById('clear').onclick = clean
+        document.getElementById('save').onclick = save
+
+        // Prep canvas 
+        clean()
+      }
+    </script>
+  </head>
+  <body onload="loaded()">
+    <div class="container">
+      <div id="drawspace">
+        <canvas
+          id="sketchpad"
+          onSelectStart="this.style.cursor='crosshair'; return false;"
+          width="500"
+          height="500"
+          style="border: 1px solid #777"
+        >
+        </canvas>
+        <button id="clear">Clear</button>
+        <button id="save">Save</button>
+        <a id="link"></a>
+      </div>
+    </div>
+  </body>
+</html>
