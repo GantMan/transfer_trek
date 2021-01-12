@@ -4,9 +4,12 @@ import * as fs from 'fs'
 import { default as glob } from 'glob'
 
 function encodeDir(filePath) {
-  if (filePath.includes('ferengi')) return 0
-  if (filePath.includes('klingons')) return 1
-  if (filePath.includes('starfleet')) return 2
+  if (filePath.includes('pawn')) return 0
+  if (filePath.includes('knight')) return 1
+  if (filePath.includes('bishop')) return 2
+  if (filePath.includes('rook')) return 3
+  if (filePath.includes('queen')) return 4
+  if (filePath.includes('king')) return 5
 
   // Should never get here
   console.error('Unrecognized folder')
@@ -44,8 +47,8 @@ export function folderToTensors() {
     // Read images
     console.log('Identifying PNG List')
 
-    const pngs = glob.sync('files/**/*.png')
-    const jpgs = glob.sync('files/**/*.jpg')
+    const pngs = glob.sync('../training_chess/**/*.png')
+    const jpgs = glob.sync('../training_chess/**/*.jpg')
     console.log('PNGs', pngs.length)
     console.log('JPGs', jpgs.length)
 
@@ -60,11 +63,11 @@ export function folderToTensors() {
       const imageTensor = tf.node.decodeImage(imageData, 1)
       const smallTensor = tf.image.resizeNearestNeighbor(
         imageTensor,
-        [28, 28],
+        [224, 224],
         true
       )
 
-      const smooshedTensor = smallTensor.reshape([784])
+      const smooshedTensor = smallTensor.reshape([224*224])
 
       // Store in memory
       YS.push(answer)
@@ -79,7 +82,7 @@ export function folderToTensors() {
     // Stack values
     console.log('Stacking')
     const X = tf.stack(XS)
-    const Y = tf.oneHot(YS, 3)
+    const Y = tf.oneHot(YS, 6)
 
     console.log('Images all converted to tensors:')
     console.log('X', X.shape)

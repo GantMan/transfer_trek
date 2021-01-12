@@ -10,7 +10,7 @@ async function doTraining() {
   const [X, Y] = await folderToTensors()
 
   let df = new dfd.DataFrame(Y, {
-    columns: ['ferengi', 'klingons', 'starfleet'],
+    columns: ['pawn', 'knight', 'bishop', 'rook', 'queen', 'king'],
   })
 
   let dfdata = new dfd.DataFrame(X)
@@ -18,8 +18,8 @@ async function doTraining() {
   df.head().print()
   dfdata.head().print()
 
-  df.to_csv('labels.csv')
-  dfdata.to_csv('images.csv')
+  df.to_csv('chess_labels.csv')
+  dfdata.to_csv('chess_images.csv')
 
   console.log('BACK Y', df.tensor.shape)
   console.log('BACK X', dfdata.tensor.shape)
